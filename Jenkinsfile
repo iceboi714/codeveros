@@ -28,5 +28,14 @@ node {
 			}
 		}
 		*/
+		stage('delivery') {
+			if(env.BRANCH_NAME == 'master') {
+				docker.withRegistry('', 'DockerHub'){
+					def myImage = docker.build("iceboi714/ui:${env.BUILD_ID}")
+					myImage.push()
+					myImage.push('latest')
+				}
+			}
+		}
 	}
 }
