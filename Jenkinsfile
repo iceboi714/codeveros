@@ -36,7 +36,10 @@ node {
 					def myImage = docker.build("${imageRepo}:${env.BUILD_ID}")
 					myImage.push()
 					myImage.push('dev')
+
+					build job: 'deploy', parameters: [string(name: 'env', value: 'dev'), string(name: 'tag', value: 'dev')]
 				}
+
 			}
 		}
 		stage('promote') {
@@ -45,6 +48,8 @@ node {
 					def myImage = docker.build("${imageRepo}:dev")
 					myImage.pull()
 					myImage.push('latest')
+
+					build job: 'deploy', parameters: [string(name: 'env', value: 'prod'), string(name: 'tag', value: 'latest')]
 				}
 			}
 		}
