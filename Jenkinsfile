@@ -1,9 +1,11 @@
+def servicePath, = 'services/ui/angular'
+def imageRepo 'iceboi714/ui'
 node {
 	stage('cleanup') {
 		cleanWs();
 	}
 	checkout scm
-	dir('services/ui/angular') {
+	dir(servicePath) {
 		/*
 		stage ('Dependencies') {
 			docker.image('node:14.16').inside {
@@ -29,10 +31,19 @@ node {
 		}
 		*/
 		stage('delivery') {
+			if(env.BRANCH_NAME == 'develop') {
+				docker.withRegistry('', 'DockerHub'){
+					def myImage = docker.build("${imageRepo}:${env.BUILD_ID}")
+					myImage.push()
+					myImage.push('dev')
+				}
+			}
+		}
+		stage('promote') {
 			if(env.BRANCH_NAME == 'master') {
 				docker.withRegistry('', 'DockerHub'){
-					def myImage = docker.build("iceboi714/ui:${env.BUILD_ID}")
-					myImage.push()
+					def myImage = docker.build("${imageRepo}:dev")
+					myImage.pull()
 					myImage.push('latest')
 				}
 			}
