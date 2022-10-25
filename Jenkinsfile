@@ -1,5 +1,5 @@
-def servicePath, = 'services/ui/angular'
-def imageRepo 'iceboi714/ui'
+def servicePath = 'services/ui/angular'
+def imageRepo = 'iceboi714/ui'
 node {
 	stage('cleanup') {
 		cleanWs();
